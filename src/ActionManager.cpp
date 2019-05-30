@@ -1,6 +1,6 @@
 #include "ActionManager.h"
 
-std::string ActionManager::getClawStatus() {
+std::string ActionManager::getClawStatus() {          // Converts status code to string
   switch (CLAW_STATUS) {
   case CLAW_OPEN_STATUS:
     return "Claw Open";
@@ -12,7 +12,7 @@ std::string ActionManager::getClawStatus() {
   return "Unknown";
 }
 
-std::string ActionManager::getArmStatus() {
+std::string ActionManager::getArmStatus() {          // Converts status code to string
   switch (ARM_STATUS) {
   case ARM_UP_STATUS:
     return "Arm Up";
@@ -23,7 +23,7 @@ std::string ActionManager::getArmStatus() {
   }
   return "Unknown";
 }
-std::string ActionManager::getObjectStatus() {
+std::string ActionManager::getObjectStatus() {          // Converts status code to string
   switch (OBJECT_STATUS) {
   case EMPTY_HANDED:
     return "Empty Handed";
@@ -37,7 +37,7 @@ std::string ActionManager::getObjectStatus() {
   }
   return "Unknown";
 }
-std::string ActionManager::getActionStatus() {
+std::string ActionManager::getActionStatus() {          // Converts status code to string
   switch (ACTION_STATUS) {
   case STATUS_TRACK:
     return "Tracking object";
@@ -52,7 +52,7 @@ std::string ActionManager::getActionStatus() {
   return "Unknown";
 }
 
-std::string ActionManager::getTaskStatus() {
+std::string ActionManager::getTaskStatus() {          // Converts status code to string
   switch (TASK_STATUS) {
   case TASK_PLACE:
     return "Placing object";
@@ -64,7 +64,7 @@ std::string ActionManager::getTaskStatus() {
   return "Unknown";
 }
 
-std::string ActionManager::getTrackStatus() {
+std::string ActionManager::getTrackStatus() {          // Converts status code to string
   switch (TRACK_AXIS) {
   case XDIRECTION:
     return "Rotating...";
@@ -76,7 +76,7 @@ std::string ActionManager::getTrackStatus() {
   return "Unknown";
 }
 
-int ActionManager::getClawStatusCode() { return CLAW_STATUS; }
+int ActionManager::getClawStatusCode() { return CLAW_STATUS; }          // Returns the desired status code
 
 int ActionManager::getArmStatusCode() { return ARM_STATUS; }
 
@@ -88,7 +88,7 @@ int ActionManager::getTaskStatusCode() { return TASK_STATUS; }
 
 int ActionManager::getTrackStatusCode() { return TRACK_AXIS; }
 
-void ActionManager::setClawStatus(int statusUpdate) {
+void ActionManager::setClawStatus(int statusUpdate) {          // Sets the status and the color
   CLAW_STATUS = statusUpdate;
   switch (CLAW_STATUS) {
   case CLAW_OPEN_STATUS:
@@ -100,7 +100,7 @@ void ActionManager::setClawStatus(int statusUpdate) {
   }
 }
 
-void ActionManager::setArmStatus(int statusUpdate) {
+void ActionManager::setArmStatus(int statusUpdate) {          // Sets the status and the color
   ARM_STATUS = statusUpdate;
 
   switch (ARM_STATUS) {
@@ -113,7 +113,7 @@ void ActionManager::setArmStatus(int statusUpdate) {
   }
 }
 
-void ActionManager::setObjectStatus(int statusUpdate) {
+void ActionManager::setObjectStatus(int statusUpdate) {          // Sets the status and the color
   OBJECT_STATUS = statusUpdate;
 
   switch (OBJECT_STATUS) {
@@ -129,7 +129,7 @@ void ActionManager::setObjectStatus(int statusUpdate) {
   }
 }
 
-void ActionManager::setActionStatus(int statusUpdate) {
+void ActionManager::setActionStatus(int statusUpdate) {          // Sets the status and the color
   ACTION_STATUS = statusUpdate;
 
   switch (ACTION_STATUS) {
@@ -145,7 +145,7 @@ void ActionManager::setActionStatus(int statusUpdate) {
   }
 }
 
-void ActionManager::setTaskStatus(int statusUpdate) {
+void ActionManager::setTaskStatus(int statusUpdate) {          // Sets the status and the color
   TASK_STATUS = statusUpdate;
   switch (TASK_STATUS) {
   case TASK_GRAB:
@@ -157,7 +157,7 @@ void ActionManager::setTaskStatus(int statusUpdate) {
   }
 }
 
-void ActionManager::setTrackStatus(int statusUpdate) {
+void ActionManager::setTrackStatus(int statusUpdate) {          // Sets the status and the color
   TRACK_AXIS = statusUpdate;
   switch (TRACK_AXIS) {
   case XDIRECTION:
@@ -169,7 +169,7 @@ void ActionManager::setTrackStatus(int statusUpdate) {
   }
 }
 
-void ActionManager::moveArm(int pos) {
+void ActionManager::moveArm(int pos) {                             // Moves the robot arm to the desired position and set the proper status code
   armMotorRef.setStopping(vex::brakeType::brake);
   armMotorRef.rotateTo(pos, vex::rotationUnits::deg, 20,
                        vex::velocityUnits::pct, true);
@@ -184,7 +184,7 @@ void ActionManager::moveArm(int pos) {
   }
 }
 
-void ActionManager::moveClaw(int pos) {
+void ActionManager::moveClaw(int pos) {                              // Moves the robot arm to the desired position and set the proper status code
   clawMotorRef.setStopping(vex::brakeType::brake);
   clawMotorRef.rotateTo(pos, vex::rotationUnits::deg, 20,
                         vex::velocityUnits::pct, true);
@@ -199,9 +199,9 @@ void ActionManager::moveClaw(int pos) {
   }
 }
 
-void ActionManager::grabObject() {
-  rightMotorRef.stop(vex::brakeType::brake);
-  leftMotorRef.stop(vex::brakeType::brake);
+void ActionManager::grabObject() {                    // This function is called in order to grab an object. First the arm is moved down and the claw is closed.
+  rightMotorRef.stop(vex::brakeType::brake);          // The status is updated to reflect that the robot grabbed an object. The robot updates the task status to reflect
+  leftMotorRef.stop(vex::brakeType::brake);           // that the robot needs to place the grabbed object. The current target object type is set depending on the signature of the post to place the object
 
   moveArm(ARM_DOWN);
   moveClaw(CLAW_CLOSED);
@@ -211,13 +211,13 @@ void ActionManager::grabObject() {
   setTaskStatus(TASK_PLACE);
 
   if (placeCounter == 0) {
-    setTargetObjectType(RED_OBJECT);
+    setTargetObjectType(RED_OBJECT);          //If an object hasn't been placed yet, the post will only be red
   } else {
-    setTargetObjectType(RED_YELLOW_OBJECT);
+    setTargetObjectType(RED_YELLOW_OBJECT);   // If it has, the signature will be the combined type
   }
 }
 
-void ActionManager::update(Objects &currentT) {
+void ActionManager::update(Objects &currentT) {           // This function is called every cycle and updates the currently targeted object and tracks or searches based on the status code
   trackingObject = currentT;
   switch (ACTION_STATUS) {
   case STATUS_TRACK:
@@ -229,9 +229,9 @@ void ActionManager::update(Objects &currentT) {
   }
 }
 
-void ActionManager::placeObject() {
-  rightMotorRef.stop(vex::brakeType::brake);
-  leftMotorRef.stop(vex::brakeType::brake);
+void ActionManager::placeObject() {                   // This function describes the steps to place an object. First, the arm is moved down and the claw is opened. The status is updated
+  rightMotorRef.stop(vex::brakeType::brake);          // to reflect that an object was placed. The robot then moves back 4 inches and moves the arm up. The status is updated to 
+  leftMotorRef.stop(vex::brakeType::brake);           // reflect that the robot does not have anything. The action status is set to tell the robot to search for an object on the next call of update()
 
   moveArm(ARM_DOWN);
   moveClaw(CLAW_OPEN);
@@ -245,7 +245,7 @@ void ActionManager::placeObject() {
   setTargetObjectType(YELLOW_OBJECT);
 }
 
-void ActionManager::doTask() {
+void ActionManager::doTask() {          // This function is called when the object is under the claw and within the bounds of the vision and distance sensors and performs the desired task based on the status code
   switch (TASK_STATUS) {
   case TASK_GRAB:
     grabObject();
@@ -256,7 +256,7 @@ void ActionManager::doTask() {
   }
 }
 
-void ActionManager::track() {
+void ActionManager::track() {           // This function is called when the status is set to track. First the object centers itself using vision data and then moves forward using the distance sensor
   switch (TRACK_AXIS) {
   case XDIRECTION:
     centerX();
@@ -267,77 +267,77 @@ void ActionManager::track() {
   }
 }
 
-void ActionManager::centerX() {
+void ActionManager::centerX() {                                       
   if (!trackingObject.isInBoundVision && trackingObject.doesObjectExist) {
     if (trackingObject.powerX > 0.5) {
-      rightMotorRef.spin(vex::directionType::rev, trackingObject.powerX,
+      rightMotorRef.spin(vex::directionType::rev, trackingObject.powerX,          // If powerX is positive, rotate towards the right
                          vex::velocityUnits::pct);
       leftMotorRef.spin(vex::directionType::fwd, trackingObject.powerX,
                         vex::velocityUnits::pct);
     } else if ((trackingObject.powerX <= 0.5) &&
                (trackingObject.powerX >= -0.5)) {
-      rightMotorRef.stop(vex::brakeType::brake);
+      rightMotorRef.stop(vex::brakeType::brake);                                  // Stop moving if powerX is low
       leftMotorRef.stop(vex::brakeType::brake);
     } else if (trackingObject.powerX < -0.5) {
-      rightMotorRef.spin(vex::directionType::fwd, -trackingObject.powerX,
+      rightMotorRef.spin(vex::directionType::fwd, -trackingObject.powerX,         // If powerX is negative, rotate towards the left
                          vex::velocityUnits::pct);
       leftMotorRef.spin(vex::directionType::rev, -trackingObject.powerX,
                         vex::velocityUnits::pct);
     }
   } else if (!trackingObject.doesObjectExist) {
-    setActionStatus(STATUS_SEARCH);
+    setActionStatus(STATUS_SEARCH);           // If the object does not exist then begin search
   } else if (trackingObject.isInBoundVision && trackingObject.doesObjectExist) {
-    rightMotorRef.stop(vex::brakeType::brake);
+    rightMotorRef.stop(vex::brakeType::brake);                                    // Object has been successfully centered and is ready to be centered using the distance sensor.
     leftMotorRef.stop(vex::brakeType::brake);
     setTrackStatus(YDIRECTION);
   }
 }
 
-void ActionManager::centerY() {
+void ActionManager::centerY() {            
   if (!trackingObject.isInBoundDistance && trackingObject.doesObjectExist &&
-      trackingObject.isInBoundVision) {
+      trackingObject.isInBoundVision) {                   
     if (trackingObject.powerY > .5) {
-      rightMotorRef.spin(vex::directionType::fwd, trackingObject.powerY,
+      rightMotorRef.spin(vex::directionType::fwd, trackingObject.powerY,           // If powerY is positive, move forward
                          vex::velocityUnits::pct);
       leftMotorRef.spin(vex::directionType::fwd, trackingObject.powerY,
                         vex::velocityUnits::pct);
     } else if ((trackingObject.powerY <= .5) &&
                (trackingObject.powerY >= -.5)) {
-      rightMotorRef.stop(vex::brakeType::brake);
+      rightMotorRef.stop(vex::brakeType::brake);                                   // If powerY is 0, stop robot
       leftMotorRef.stop(vex::brakeType::brake);
     } else if (trackingObject.powerY < -.5) {
-      rightMotorRef.spin(vex::directionType::rev, -trackingObject.powerY,
-                         vex::velocityUnits::pct);
+      rightMotorRef.spin(vex::directionType::rev, -trackingObject.powerY,         // If powerY is negative, move backwards
+                         vex::velocityUnits::pct);    
       leftMotorRef.spin(vex::directionType::rev, -trackingObject.powerY,
                         vex::velocityUnits::pct);
     }
   } else if (trackingObject.doesObjectExist &&
-             trackingObject.isBoundVisionDistance) {
+             trackingObject.isBoundVisionDistance) {           // If object is in bounds to grab, perform the task according to the Task status
     rightMotorRef.stop(vex::brakeType::brake);
     leftMotorRef.stop(vex::brakeType::brake);
     doTask();
-    setTrackStatus(XDIRECTION);
+    setTrackStatus(XDIRECTION);                   // Reset tracking direction to X first
   }
 
-  if (!trackingObject.isInBoundVision) {
-    setTrackStatus(XDIRECTION);
+  if (!trackingObject.isInBoundVision) {         // If the object is no longer in bounds with vision sensor, reset tracking direction
+    setTrackStatus(XDIRECTION);   
   }
 
-  if (!trackingObject.doesObjectExist) {
+  if (!trackingObject.doesObjectExist) {         // If object no longer exists, make the robot search
     setActionStatus(STATUS_SEARCH);
   }
 }
 
 void ActionManager::searchFor() {
-  if (trackingObject.doesObjectExist) {
+  if (trackingObject.doesObjectExist) {          // If the object exists, track the object
     setActionStatus(STATUS_TRACK);
   } else {
     rightMotorRef.spin(vex::directionType::rev, 10, vex::velocityUnits::pct);
-    leftMotorRef.spin(vex::directionType::fwd, 10, vex::velocityUnits::pct);
+    leftMotorRef.spin(vex::directionType::fwd, 10, vex::velocityUnits::pct);          // Otherwise, rotate towards the right
   }
 }
 
-void ActionManager::printStatus() {
+void ActionManager::printStatus() {                      // Handles the printing of the screen
   screenAction.setPenColor(vex::color::white);
   screenAction.setCursor(5, 1);
   screenAction.print("Claw: ");
@@ -371,7 +371,7 @@ void ActionManager::printStatus() {
   screenAction.print("%s", getTaskStatus().c_str());
 }
 
-void ActionManager::initialize() {
+void ActionManager::initialize() {           // Begin program by raising arm and searching for an object
   moveArm(ARM_UP);
 
   setActionStatus(STATUS_SEARCH);
@@ -393,7 +393,7 @@ void ActionManager::driveBack(double inches) {
   rightMotorRef.rotateFor(-degreesToRotate, vex::rotationUnits::deg);
 }
 
-void ActionManager::stopEverything() {
+void ActionManager::stopEverything() {            // Reset everything
   if (rightMotorRef.isSpinning()) {
     rightMotorRef.stop();
   }

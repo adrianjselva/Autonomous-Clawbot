@@ -72,4 +72,7 @@ const int YELLOW_OBJECT = 1;
 const int RED_OBJECT = 2;
 const int RED_YELLOW_OBJECT = 3;
 
+const int ACTION_V = 0;
+const int VISION_V = 1;
+
 #endif
