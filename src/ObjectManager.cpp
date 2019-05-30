@@ -11,6 +11,10 @@ void ObjectManager::update(vex::safearray<vex::vision::object, 16> &vexArray, do
       break;
     }
   }
+
+  if(!currentTrack) {
+    currentTrack = &emptyObject;
+  }
 }
 
 void ObjectManager::printObjects(int VIEW) {
