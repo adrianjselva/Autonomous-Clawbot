@@ -75,4 +75,19 @@ const int RED_YELLOW_OBJECT = 3;
 const int ACTION_V = 0;
 const int VISION_V = 1;
 
+const int VISION_MAP_BUTTON_LOWER_BOUND_X = 295;
+const int VISION_MAP_BUTTON_UPPER_BOUND_X = 405;
+const int VISION_MAP_BUTTON_LOWER_BOUND_Y = 173;
+const int VISION_MAP_BUTTON_UPPER_BOUND_Y = 203;
+
+const int STOP_BUTTON_LOWER_BOUND_X = xVisionOffset + 21;
+const int STOP_BUTTON_UPPER_BOUND_X = xVisionOffset + 61;
+const int STOP_BUTTON_LOWER_BOUND_Y = 10;
+const int STOP_BUTTON_UPPER_BOUND_Y = 50;
+
+const int EXIT_BUTTON_LOWER_BOUND_X = xVisionOffset + 21;
+const int EXIT_BUTTON_UPPER_BOUND_X = xVisionOffset + 61;
+const int EXIT_BUTTON_LOWER_BOUND_Y = 10;
+const int EXIT_BUTTON_UPPER_BOUND_Y = 50;
+
 #endif

@@ -4,36 +4,36 @@
 #include "robot-config.h"
 #include "visionYellow.h"
 
-/** Function that draws the screen map **/
+/** Startup and exit functions **/
+void init();
+void exit();
+
+/** Drawing functions **/
 void drawActionManagerView();
 void drawVisionMapView();
 void checkActionButton();
 void checkVisionButton();
+void drawLines();
+
+/** Button bound check **/
+bool isInBounds(int c, int low, int high);
 
 /** Thread functions **/
 void printInfo();
 void dataThread();
 void actionThread();
 
-void driveBac(double inches);
-
-bool isObjectReadyToGrab();
-void drawLines();
-
+/** Variable to keep track of current view **/
 int CURRENT_VIEW;
 
+/** Thread objects **/
 vex::thread dataThreadObject;
 vex::thread actionThreadObject;
 vex::thread printThreadObject;
 
-/** Hierarchical functions **/
-void init();
-void exit();
-
-// Robot dimensions
+/** Manager objects **/
 ObjectManager objectManager(Brain.Screen);
-ActionManager actionManager(RightMotor, LeftMotor, ClawMotor, ArmMotor,
-                            Brain.Screen);
+ActionManager actionManager(RightMotor, LeftMotor, ClawMotor, ArmMotor, Brain.Screen);
 
 int main() {
   init();                                                   // Function to set some initial values
@@ -41,10 +41,6 @@ int main() {
   dataThreadObject = vex::thread (dataThread);              // Initialize thread objects dataThreadObject, actionThreadObject, and printThreadObject
   actionThreadObject = vex::thread (actionThread);          // dataThread, actionThread, and printInfo are the functions executed by each thread object
   printThreadObject = vex::thread (printInfo);
-
-  dataThreadObject.join();                                  // join() makes each thread wait until the others are completed
-  actionThreadObject.join();                                // Unsure if necessary
-  printThreadObject.join();
 
   return 0;
 }
@@ -64,18 +60,25 @@ void dataThread() {
   }
 }
 
+void actionThread() {
+  while (1) {
+    actionManager.update(objectManager.currentTrack);       // Update ActionManager and pass the object currently being tracked to it
+    vex::this_thread::sleep_for(25);                        // Sleep for 25ms
+  }
+}
+
 void printInfo() {
   while (1) {
     switch (CURRENT_VIEW) {
     case ACTION_V:
-      drawActionManagerView();                      // Draws the ActionManagerView which displays the state of the robot
-      actionManager.printStatus();                  // Prints information from the ActionManager class about the state of the robot
-      objectManager.printObjects(ACTION_V);         // Draws the objects to the display in ACTION_V form
+      drawActionManagerView();                              // Draws the ActionManagerView which displays the state of the robot
+      actionManager.printStatus();                          // Prints information from the ActionManager class about the state of the robot
+      objectManager.printObjects(ACTION_V);                 // Draws the objects to the display in ACTION_V form
       break;
     case VISION_V:
-      drawVisionMapView();                          // Draws a visual representation of the Vision sensor data
-      objectManager.printObjects(VISION_V);         // Draws the objects as rectangles as interpreted by the vision sensor
-      drawLines();                                  // Draws the lines where the object is still in bounds 
+      drawVisionMapView();                                  // Draws a visual representation of the Vision sensor data
+      objectManager.printObjects(VISION_V);                 // Draws the objects as rectangles as interpreted by the vision sensor
+      drawLines();                                          // Draws the lines where the object is still in bounds 
       break;
     default:
       drawActionManagerView();
@@ -83,48 +86,43 @@ void printInfo() {
       objectManager.printObjects(ACTION_V);
       break;
     }
-    Brain.Screen.render();
+    Brain.Screen.render();                                  // Draws views to screen
 
-    if (Brain.Screen.pressing()) {          // Returns true if the screen is being pressed
+    if (Brain.Screen.pressing()) {                          // Returns true if the screen is being pressed
       switch (CURRENT_VIEW) {
       case ACTION_V:
-        checkActionButton();                // Checks if the button to switch to the vision view or the stop button is being pressed
+        checkActionButton();                                // Checks if the button to switch to the vision view or the stop button is being pressed
         break;
       case VISION_V:
-        checkVisionButton();                // Checks if the button to return to Action View is being pressed
+        checkVisionButton();                                // Checks if the button to return to Action View is being pressed
         break;
       }
     }
 
-    vex::this_thread::sleep_for(150);       // Sleep for 150 ms
+    vex::this_thread::sleep_for(150);                       // Sleep for 150 ms
   }
 }
 
+bool isInBounds(int c, int low, int high) {                 // Return true if coordinate passed is in between the two values
+  return((c <= high) && (c >= low));
+}
+
 void checkActionButton() {
-  if ((Brain.Screen.xPosition() > 295) &&               // Checks if the touch position was in the bounds of the Vision Map button and
-      (Brain.Screen.xPosition() < (295 + 110))) {       // sets the current view to Vision_V
-    if ((Brain.Screen.yPosition() > 173) &&
-        (Brain.Screen.yPosition() < (173 + 30))) {
-      CURRENT_VIEW = VISION_V;
-    }
+  if(isInBounds(Brain.Screen.xPosition(), VISION_MAP_BUTTON_LOWER_BOUND_X, VISION_MAP_BUTTON_UPPER_BOUND_X) &&          // Checks if the touch position was in the bounds of the Vision Map button and
+  isInBounds(Brain.Screen.yPosition(), VISION_MAP_BUTTON_LOWER_BOUND_Y, VISION_MAP_BUTTON_UPPER_BOUND_Y)) {             // sets the current view to Vision_V
+    CURRENT_VIEW = VISION_V;
   }
 
-  if ((Brain.Screen.xPosition() > xVisionOffset + 21) &&          // Checks if the touch was in the bounds of the Stop button and exits the program if it is
-      (Brain.Screen.xPosition() < (xVisionOffset + 61))) {
-    if ((Brain.Screen.yPosition() > 10) &&
-        (Brain.Screen.yPosition() < (50))) {
-      exit();
-    }
+  if(isInBounds(Brain.Screen.xPosition(), STOP_BUTTON_LOWER_BOUND_X, STOP_BUTTON_UPPER_BOUND_X) &&                      // Checks if the touch was in the bounds of the Stop button and exits the program if it is
+  isInBounds(Brain.Screen.yPosition(), STOP_BUTTON_LOWER_BOUND_Y, STOP_BUTTON_UPPER_BOUND_Y)) {
+    exit();
   }
 }
 
 void checkVisionButton() {
-  if ((Brain.Screen.xPosition() > xVisionOffset + 21) &&          // Checks if the touch was in the bounds of the Exit button and sets the current view to Action_V
-      (Brain.Screen.xPosition() < (xVisionOffset + 61))) {
-    if ((Brain.Screen.yPosition() > 10) &&
-        (Brain.Screen.yPosition() < (50))) {
-      CURRENT_VIEW = ACTION_V;
-    }
+  if(isInBounds(Brain.Screen.xPosition(), EXIT_BUTTON_LOWER_BOUND_X, EXIT_BUTTON_UPPER_BOUND_X) &&                      // Checks if the touch was in the bounds of the Exit button and sets the current view to Action_V
+  isInBounds(Brain.Screen.yPosition(), EXIT_BUTTON_LOWER_BOUND_Y, EXIT_BUTTON_UPPER_BOUND_Y)) {
+    CURRENT_VIEW = ACTION_V;
   }
 }
 
@@ -141,28 +139,28 @@ void drawVisionMapView() {
 }
 
 void drawLines() {
-  Brain.Screen.setPenColor(vex::color::purple);                                  // Sets pen color to purple
-  Brain.Screen.drawLine(168 + xOffset, 0, 249 + xOffset, visionHeight);          // Draws middle bound line for the centered x
-  Brain.Screen.drawLine(168 + xOffset, 0, 261 + xOffset, visionHeight);          // Draws the upper bound line
-  Brain.Screen.drawLine(168 + xOffset, 0, 237 + xOffset, visionHeight);          // Draws the lower bound line
+  Brain.Screen.setPenColor(vex::color::purple);                                       // Sets pen color to purple
+  Brain.Screen.drawLine(168 + xOffset, 0, 249 + xOffset, visionHeight);               // Draws middle bound line for the centered x
+  Brain.Screen.drawLine(168 + xOffset, 0, 261 + xOffset, visionHeight);               // Draws the upper bound line
+  Brain.Screen.drawLine(168 + xOffset, 0, 237 + xOffset, visionHeight);               // Draws the lower bound line
 }
 
 void drawActionManagerView() {
   Brain.Screen.setFont(fontType::mono15);       
-  Brain.Screen.clearScreen(color::black);          // Clears the screen and sets the font of 
+  Brain.Screen.clearScreen(color::black);                                             // Clears the screen and sets the font
 
   Brain.Screen.setPenColor(vex::color::white);
   Brain.Screen.drawLine(xOffset, 0, xVisionOffset, 0);
-  Brain.Screen.drawLine(xOffset, displayHeight, xVisionOffset, displayHeight);          // Creates a white bounding box that displays the objects x positions relative to the "center"          
+  Brain.Screen.drawLine(xOffset, displayHeight, xVisionOffset, displayHeight);        // Creates a white bounding box that displays the objects x positions relative to the "center"          
   Brain.Screen.drawLine(xOffset, 0, xOffset, displayHeight);
   Brain.Screen.drawLine(xVisionOffset, 0, xVisionOffset, 50);
 
   Brain.Screen.setPenColor(vex::color::orange);
   Brain.Screen.drawLine(leftBound, 0, leftBound, displayHeight);
-  Brain.Screen.drawLine(rightBound, 0, rightBound, displayHeight);          // Creates the left and right bounds of the center in orange
+  Brain.Screen.drawLine(rightBound, 0, rightBound, displayHeight);                    // Creates the left and right bounds of the center in orange
                                 
   Brain.Screen.setPenColor(vex::color::red);
-  Brain.Screen.drawLine(middleBound, 0, middleBound, displayHeight);          // Creates the middle target line 
+  Brain.Screen.drawLine(middleBound, 0, middleBound, displayHeight);                  // Creates the middle target line 
 
   Brain.Screen.setPenColor(vex::color::purple);
   Brain.Screen.setCursor(17, 1);
@@ -170,36 +168,29 @@ void drawActionManagerView() {
 
   Brain.Screen.setPenColor(objectManager.currentTrack.objectColor);
   Brain.Screen.setCursor(8, 45);
-  Brain.Screen.print("PowerX: %.2f", objectManager.currentTrack.powerX);          // Displays the PowerX variable of the object currently being tracked
+  Brain.Screen.print("PowerX: %.2f", objectManager.currentTrack.powerX);              // Displays the PowerX variable of the object currently being tracked
 
   Brain.Screen.setCursor(9, 45);
-  Brain.Screen.print("Object ID: %d", objectManager.currentTrack.idZ);          // Object ID of the object currently being tracked
+  Brain.Screen.print("Object ID: %d", objectManager.currentTrack.idZ);                // Object ID of the object currently being tracked
 
   Brain.Screen.setCursor(10, 45);
-  Brain.Screen.print("Exists: %d", objectManager.currentTrack.doesObjectExist);          // Does the current object exist
+  Brain.Screen.print("Exists: %d", objectManager.currentTrack.doesObjectExist);       // Does the current object exist
 
   Brain.Screen.setPenColor(vex::color::white); 
-  Brain.Screen.drawRectangle(295, 173, 110, 30);           // Vision view button 
+  Brain.Screen.drawRectangle(295, 173, 110, 30);                                      // Vision view button 
   Brain.Screen.setCursor(13, 45);
-  Brain.Screen.print("Vision View");                       // Vision view button text
+  Brain.Screen.print("Vision View");                                                  // Vision view button text
 
   Brain.Screen.setPenColor(color::white);
-  Brain.Screen.drawRectangle(xVisionOffset + 21, 10, 40, 40, vex::color::red);           // Draw stop button 
+  Brain.Screen.drawRectangle(xVisionOffset + 21, 10, 40, 40, vex::color::red);        // Draw stop button 
   Brain.Screen.setPenColor(color::white);
   Brain.Screen.printAt(xVisionOffset + 25, 35, false, "Stop"); 
 }
 
-void actionThread() {
-  while (1) {
-    actionManager.update(objectManager.currentTrack);           // Update ActionManager and pass the object currently being tracked to it
-    vex::this_thread::sleep_for(25);                            // Sleep for 25ms
-  }
-}
-
 void exit() {
-  actionManager.stopEverything();          // Stop all action events
-  actionThreadObject.interrupt();          // interrupt() stops the execution of each thread
+  actionManager.stopEverything();                                                     // Stop all action events
+  actionThreadObject.interrupt();                                                     // interrupt() stops the execution of each thread
   dataThreadObject.interrupt();
   printThreadObject.interrupt();
-  vexSystemExitRequest();                  // System call to exit program
+  vexSystemExitRequest();                                                             // System call to exit program
 }
