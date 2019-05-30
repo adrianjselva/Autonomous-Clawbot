@@ -28,10 +28,6 @@ void Objects::setBoundDistance() {
   }
 }
 
-void Objects::setScreen(vex::brain::lcd& t) {           // Set screen equal to reference
-  screen = t;
-}
-
 void Objects::setConditions() {
   setBoundVision();
   setBoundDistance();
@@ -190,12 +186,12 @@ void Objects::setDefaultValues() {          // This function sets all the values
   sufficientDataCounter = 0;
 }
 
-Objects::Objects() {           // Constructor
+Objects::Objects() : screen(nullptr){           // Constructor
   setDefaultValues();
 }
 
-Objects::Objects(vex::brain::lcd &brainD) {           // Overloaded constructor that takes a reference to the Screen object as a parameter
-  screen = brainD;
+Objects::Objects(vex::brain::lcd *brainD) : screen(brainD) {           // Overloaded constructor that takes a reference to the Screen object as a parameter
+  
   setDefaultValues();
 }
 
@@ -203,13 +199,13 @@ void Objects::printObject(int VIEW) {            // This function prints the obj
   if(doesObjectExist) {
     switch(VIEW){
       case ACTION_V:
-        screen.drawCircle(averagedX + xOffset, 25, 2, objectColor);           // Prints object as a colored dot that moves only in the x direction
+        screen->drawCircle(averagedX + LEFT_BOUND_OFFSETTED, 25, 2, objectColor);           // Prints object as a colored dot that moves only in the x direction
         break;
       case VISION_V:                           // Prints the object as a colored rectangular blob with black circle in the center
-        screen.setPenColor(objectColor);
-        screen.printAt(originX + xOffset, originY + averagedHeight + 10, true, "X: %d, Y:%d BoundX:%d", averagedX, averagedY, isInBoundVision);
-        screen.drawRectangle(originX + xOffset, originY, averagedWidth, averagedHeight, objectColor);
-        screen.drawCircle(averagedX + xOffset, averagedY, 2, vex::color::black);
+        screen->setPenColor(objectColor);
+        screen->printAt(originX + LEFT_BOUND_OFFSETTED, originY + averagedHeight + 10, true, "X: %d, Y:%d BoundX:%d", averagedX, averagedY, isInBoundVision);
+        screen->drawRectangle(originX + LEFT_BOUND_OFFSETTED, originY, averagedWidth, averagedHeight, objectColor);
+        screen->drawCircle(averagedX + LEFT_BOUND_OFFSETTED, averagedY, CIRCLE_RADIUS, vex::color::black);
         break;
     }
   }

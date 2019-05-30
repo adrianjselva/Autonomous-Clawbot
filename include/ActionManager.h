@@ -18,14 +18,14 @@ class ActionManager {
 
   int placeCounter;
 
-  Objects trackingObject;
+  Objects *trackingObject;
 
-  vex::motor& rightMotorRef;
-  vex::motor& leftMotorRef;
-  vex::motor& clawMotorRef;
-  vex::motor& armMotorRef;
+  vex::motor *rightMotorRef;
+  vex::motor *leftMotorRef;
+  vex::motor *clawMotorRef;
+  vex::motor *armMotorRef;
 
-  vex::brain::lcd screenAction;
+  vex::brain::lcd *screenAction;
 
   vex::color clawColor;
   vex::color armColor;
@@ -66,7 +66,7 @@ class ActionManager {
   void grabObject();
   void doTask();
 
-  void update(Objects& currentT);
+  void update(Objects *currentT);
   void track();
   void placeObject();
   void searchFor();
@@ -79,5 +79,5 @@ class ActionManager {
   bool isReadyToTrack();
   void driveBack(double inches);
 
-  ActionManager(vex::motor& right, vex::motor& left, vex::motor& claw, vex::motor& arm, vex::brain::lcd& screenRef);
+  ActionManager(vex::motor *right, vex::motor *left, vex::motor *claw, vex::motor *arm, vex::brain::lcd *screenRef);
 };

@@ -32,8 +32,8 @@ vex::thread actionThreadObject;
 vex::thread printThreadObject;
 
 /** Manager objects **/
-ObjectManager objectManager(Brain.Screen);
-ActionManager actionManager(RightMotor, LeftMotor, ClawMotor, ArmMotor, Brain.Screen);
+ObjectManager objectManager(&Brain.Screen);
+ActionManager actionManager(&RightMotor, &LeftMotor, &ClawMotor, &ArmMotor, &Brain.Screen);
 
 int main() {
   init();                                                   // Function to set some initial values
@@ -62,7 +62,7 @@ void dataThread() {
 
 void actionThread() {
   while (1) {
-    actionManager.update(objectManager.currentTrack);       // Update ActionManager and pass the object currently being tracked to it
+    actionManager.update(&objectManager.currentTrack);       // Update ActionManager and pass the object currently being tracked to it
     vex::this_thread::sleep_for(25);                        // Sleep for 25ms
   }
 }
@@ -129,9 +129,9 @@ void checkVisionButton() {
 void drawVisionMapView() {
   Brain.Screen.clearScreen(color::black);                                                                                          // Sets the background color to black
   Brain.Screen.setPenColor(color::blue);                                                                                           // Sets the pen color to blue
-  Brain.Screen.drawLine(xOffset, 0, xOffset, visionHeight);                                                                        // Draws the left bound of the vision map
-  Brain.Screen.drawLine(xOffset, visionHeight, xVisionOffset, visionHeight);                                                       // Draws the bottom bound of the vision map
-  Brain.Screen.drawLine(xVisionOffset, visionHeight, xVisionOffset, 0);                                                            // Draws the right bound of the vision map
+  Brain.Screen.drawLine(LEFT_BOUND_OFFSETTED, 0, LEFT_BOUND_OFFSETTED, VISION_VIEW_HEIGHT);                                                                        // Draws the left bound of the vision map
+  Brain.Screen.drawLine(LEFT_BOUND_OFFSETTED, VISION_VIEW_HEIGHT, RIGHT_BOUND_OFFSETTED, VISION_VIEW_HEIGHT);                                                       // Draws the bottom bound of the vision map
+  Brain.Screen.drawLine(RIGHT_BOUND_OFFSETTED, VISION_VIEW_HEIGHT, RIGHT_BOUND_OFFSETTED, 0);                                                            // Draws the right bound of the vision map
 
   Brain.Screen.setPenColor(color::white);                                                                                          // Sets the pen color to white
   Brain.Screen.drawRectangle(EXIT_BUTTON_X, EXIT_BUTTON_Y, EXIT_BUTTON_WIDTH, EXIT_BUTTON_LOWER_BOUND_X, vex::color::red);         // Draws the rectangle for the Exit button                                            
@@ -140,9 +140,9 @@ void drawVisionMapView() {
 
 void drawLines() {
   Brain.Screen.setPenColor(vex::color::purple);                                       // Sets pen color to purple
-  Brain.Screen.drawLine(168 + xOffset, 0, 249 + xOffset, visionHeight);               // Draws middle bound line for the centered x
-  Brain.Screen.drawLine(168 + xOffset, 0, 261 + xOffset, visionHeight);               // Draws the upper bound line
-  Brain.Screen.drawLine(168 + xOffset, 0, 237 + xOffset, visionHeight);               // Draws the lower bound line
+  Brain.Screen.drawLine(168 + LEFT_BOUND_OFFSETTED, 0, 249 + LEFT_BOUND_OFFSETTED, VISION_VIEW_HEIGHT);               // Draws middle bound line for the centered x
+  Brain.Screen.drawLine(168 + LEFT_BOUND_OFFSETTED, 0, 261 + LEFT_BOUND_OFFSETTED, VISION_VIEW_HEIGHT);               // Draws the upper bound line
+  Brain.Screen.drawLine(168 + LEFT_BOUND_OFFSETTED, 0, 237 + LEFT_BOUND_OFFSETTED, VISION_VIEW_HEIGHT);               // Draws the lower bound line
 } /** Based on calculations of linear equations in Objects.cpp **/
 
 void drawActionManagerView() {
@@ -150,17 +150,17 @@ void drawActionManagerView() {
   Brain.Screen.clearScreen(color::black);                                             // Clears the screen and sets the font
 
   Brain.Screen.setPenColor(vex::color::white);
-  Brain.Screen.drawLine(xOffset, 0, xVisionOffset, 0);
-  Brain.Screen.drawLine(xOffset, displayHeight, xVisionOffset, displayHeight);        // Creates a white bounding box that displays the objects x positions relative to the "center"          
-  Brain.Screen.drawLine(xOffset, 0, xOffset, displayHeight);
-  Brain.Screen.drawLine(xVisionOffset, 0, xVisionOffset, 50);
+  Brain.Screen.drawLine(LEFT_BOUND_OFFSETTED, 0, RIGHT_BOUND_OFFSETTED, 0);
+  Brain.Screen.drawLine(LEFT_BOUND_OFFSETTED, DISPLAY_HEIGHT, RIGHT_BOUND_OFFSETTED, DISPLAY_HEIGHT);        // Creates a white bounding box that displays the objects x positions relative to the "center"          
+  Brain.Screen.drawLine(LEFT_BOUND_OFFSETTED, 0, LEFT_BOUND_OFFSETTED, DISPLAY_HEIGHT);
+  Brain.Screen.drawLine(RIGHT_BOUND_OFFSETTED, 0, RIGHT_BOUND_OFFSETTED, DISPLAY_HEIGHT);
 
   Brain.Screen.setPenColor(vex::color::orange);
-  Brain.Screen.drawLine(leftBound, 0, leftBound, displayHeight);
-  Brain.Screen.drawLine(rightBound, 0, rightBound, displayHeight);                    // Creates the left and right bounds of the center in orange
+  Brain.Screen.drawLine(LEFT_X_CTR, 0, LEFT_X_CTR, DISPLAY_HEIGHT);
+  Brain.Screen.drawLine(RIGHT_X_CTR, 0, RIGHT_X_CTR, DISPLAY_HEIGHT);                    // Creates the left and right bounds of the center in orange
                                 
   Brain.Screen.setPenColor(vex::color::red);
-  Brain.Screen.drawLine(middleBound, 0, middleBound, displayHeight);                  // Creates the middle target line 
+  Brain.Screen.drawLine(MIDDLE_X_CTR, 0, MIDDLE_X_CTR, DISPLAY_HEIGHT);                  // Creates the middle target line 
 
   Brain.Screen.setPenColor(vex::color::purple);
   Brain.Screen.setCursor(17, 1);
@@ -177,7 +177,7 @@ void drawActionManagerView() {
   Brain.Screen.print("Exists: %d", objectManager.currentTrack.doesObjectExist);       // Does the current object exist
 
   Brain.Screen.setPenColor(vex::color::white); 
-  Brain.Screen.drawRectangle(295, 173, 110, 30);                                      // Vision view button 
+  Brain.Screen.drawRectangle(VISION_BUTTON_X, VISION_BUTTON_Y, VISION_BUTTON_WIDTH, VISION_BUTTON_HEIGHT);                        // Vision view button 
   Brain.Screen.setCursor(13, 45);
   Brain.Screen.print("Vision View");                                                  // Vision view button text
 

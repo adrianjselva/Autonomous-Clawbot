@@ -30,7 +30,6 @@ public:
 
   void setCurrentTrack(int OTYPE);
   void printObjects(int VIEW);
-  void update(vex::safearray<vex::vision::object, 16> &vexArray, double dist,
-              int OTYPE);
-  ObjectManager(vex::brain::lcd &brainD); 
+  void update(vex::safearray<vex::vision::object, 16> &vexArray, double dist, int OTYPE);
+  ObjectManager(vex::brain::lcd *brainD); 
 };

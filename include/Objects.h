@@ -36,7 +36,7 @@ private:
   void setBoundDistance();
 
   /** Screen Reference **/
-  vex::brain::lcd screen;
+  vex::brain::lcd *screen;
 
   void setExistence();
   void setDefaultValues();
@@ -72,12 +72,11 @@ public:
 
   /** Functions **/
   void updateValues(int visionX, int visionY, int originX, int originY, double distanceTo, int id, int height, int width);
-  void setScreen(vex::brain::lcd& t);
   void printObject(int VIEW);
 
   /** CONSTRUCTORS **/
   Objects();
-  Objects(vex::brain::lcd& brainD);
+  Objects(vex::brain::lcd *brainD);
 };
 
 #endif
