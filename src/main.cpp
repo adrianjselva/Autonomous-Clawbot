@@ -62,7 +62,7 @@ void dataThread() {
 
 void actionThread() {
   while (1) {
-    actionManager.update(&objectManager.currentTrack);       // Update ActionManager and pass the object currently being tracked to it
+    actionManager.update(objectManager.currentTrack);       // Update ActionManager and pass the object currently being tracked to it
     vex::this_thread::sleep_for(25);                        // Sleep for 25ms
   }
 }
@@ -166,15 +166,15 @@ void drawActionManagerView() {
   Brain.Screen.setCursor(17, 1);
   Brain.Screen.print("Distance Sensor: %.2f inches", Sonar.distance(vex::distanceUnits::in));         // Prints output of the distance sensor in purple
 
-  Brain.Screen.setPenColor(objectManager.currentTrack.objectColor);
+  Brain.Screen.setPenColor(objectManager.currentTrack->objectColor);
   Brain.Screen.setCursor(8, 45);
-  Brain.Screen.print("PowerX: %.2f", objectManager.currentTrack.powerX);              // Displays the PowerX variable of the object currently being tracked
+  Brain.Screen.print("PowerX: %.2f", objectManager.currentTrack->powerX);              // Displays the PowerX variable of the object currently being tracked
 
   Brain.Screen.setCursor(9, 45);
-  Brain.Screen.print("Object ID: %d", objectManager.currentTrack.idZ);                // Object ID of the object currently being tracked
+  Brain.Screen.print("Object ID: %d", objectManager.currentTrack->idZ);                // Object ID of the object currently being tracked
 
   Brain.Screen.setCursor(10, 45);
-  Brain.Screen.print("Exists: %d", objectManager.currentTrack.doesObjectExist);       // Does the current object exist
+  Brain.Screen.print("Exists: %d", objectManager.currentTrack->doesObjectExist);       // Does the current object exist
 
   Brain.Screen.setPenColor(vex::color::white); 
   Brain.Screen.drawRectangle(VISION_BUTTON_X, VISION_BUTTON_Y, VISION_BUTTON_WIDTH, VISION_BUTTON_HEIGHT);                        // Vision view button 

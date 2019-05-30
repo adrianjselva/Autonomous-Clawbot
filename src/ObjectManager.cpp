@@ -7,53 +7,10 @@ void ObjectManager::update(vex::safearray<vex::vision::object, 16> &vexArray, do
 
   for(int j = 0; j < 5; j++) {
     if(objectVector.at(j).idZ == OTYPE) {
-      currentTrack = objectVector.at(j);
+      currentTrack = &objectVector.at(j);
+      break;
     }
   }
-  //sortObjects();
-  //setCurrentTrack(OTYPE);
-}
-
-void ObjectManager::sortObjects() {
-  for(int i = 0; i < 5; i ++) {
-    switch(objectVector.at(i).idZ){
-      case YELLOW_OBJECT:
-        sortYellow(objectVector.at(i));
-        break;
-      case RED_OBJECT:
-        sortRed(objectVector.at(i));
-        break;
-      case RED_YELLOW_OBJECT:
-        sortYellowRed(objectVector.at(i));
-        break;
-    }
-  }
-}
-
-void ObjectManager::setCurrentTrack(int OTYPE) {
-  switch(OTYPE){
-    case YELLOW_OBJECT:
-      currentTrack = yellowObjects.at(0);
-      break;
-    case RED_OBJECT:
-      currentTrack = redObjects.at(0);
-      break;
-    case RED_YELLOW_OBJECT:
-      currentTrack = yellowAndRed.at(0);
-      break;
-  }
-}
-
-void ObjectManager::sortYellow(Objects &yellow) {
-  yellowObjects.at(0) = yellow;
-}
-
-void ObjectManager::sortRed(Objects &red) {
-  redObjects.at(0) = red;
-}
-
-void ObjectManager::sortYellowRed(Objects &yellowRed) {
-  yellowAndRed.at(0) = yellowRed;
 }
 
 void ObjectManager::printObjects(int VIEW) {
@@ -62,10 +19,4 @@ void ObjectManager::printObjects(int VIEW) {
   }
 }
 
-ObjectManager::ObjectManager(vex::brain::lcd *brainD) : objectVector(5, Objects(brainD)), yellowObjects(5, Objects(brainD)),
-        redObjects(1, Objects(brainD)), yellowAndRed(1, Objects(brainD)){
-
-  redCounter = 0;
-  yellowAndRedCounter = 0;
-  yellowCounter = 0;
-}
+ObjectManager::ObjectManager(vex::brain::lcd *brainD) : objectVector(5, Objects(brainD)), currentTrack(nullptr) {}

@@ -395,7 +395,6 @@ void ActionManager::driveBack(double inches) {
 
 void ActionManager::stopEverything() {            // Reset everything
   rightMotorRef->stop();
-
   leftMotorRef->stop();
 
   if (ARM_STATUS == ARM_UP_STATUS) {
