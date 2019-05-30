@@ -113,4 +113,9 @@ const int STOP_BUTTON_Y = 10;
 const int STOP_BUTTON_WIDTH = 40;
 const int STOP_BUTTON_HEIGHT = 40;
 
+/** Distance bound limits **/
+const double DISTANCE_UPPER = 8.1;
+const double DISTANCE_LOWER = 7.9;
+const double DISTANCE_TARGET = 8.0;
+
 #endif

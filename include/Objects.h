@@ -20,6 +20,9 @@ private:
   double averageArray(int a[]);
   double averageArray(double a[]);
 
+  double previousErrorX;
+  double previousErrorY;
+
   /** Counter variables **/
   int arrayLoopCounter;
   int sufficientDataCounter;
