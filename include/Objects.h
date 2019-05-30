@@ -4,6 +4,7 @@
 #include "v5.h"
 #include "v5_vcs.h"
 #include <math.h>
+#include <cmath>
 
 class Objects
 {
@@ -22,6 +23,8 @@ private:
 
   double previousErrorX;
   double previousErrorY;
+  double integralX;
+  double integralY;
 
   /** Counter variables **/
   int arrayLoopCounter;

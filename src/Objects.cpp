@@ -44,11 +44,22 @@ void Objects::setPower() {
 void Objects::setPowerX() {
   if(doesObjectExist) {
     double errorX = static_cast<double>(averagedX - middleVisionBoundX());          // Set error equal to x-value minus the middle x value
+    integralX = integralX + std::abs(errorX);                                       // Keep adding to integral
+    if(errorX == 0) {                                                               // Reset integral
+      integralX = 0;
+    } else if(std::abs(errorX) > 5) {                                               // Integral is not useful with large errors
+      integralX = 0;
+    }
     previousErrorX = errorX;                                                        // Storing previous error
     double derivativeX = errorX - previousErrorX;                                   // Calculating derivative by subtracting error from previous error
-    powerX = (errorX * kP) + (derivativeX * kD);                                    // Assigning value to powerX using PID equation
+    if(errorX < 0) {                                                                // Make integral negative if error is negative
+      integralX = -1 * integralX;
+    }
+    powerX = (errorX * kP) + (integralX * kI) + (derivativeX * kD);                 // Assigning value to powerX using PID equation
   } else {
     powerX = 0;
+    integralX = 0;
+    previousErrorX = 0;
   }
 }
 
@@ -56,6 +67,16 @@ void Objects::setPowerY() {
   if (isInBoundVision && doesObjectExist) {
     double errorY = (averageDistanceToObject - DISTANCE_TARGET);           // Set error equal to distance sensor value minus the desired distance of 8 inches
     previousErrorY = errorY;                                               // Storing previous error
+    integralY = integralY + std::abs(errorY);                              // Keep adding to integral
+    if(errorY == 0) {                                                      // Reset integral
+      integralY = 0;
+    } else if(std::abs(errorY) > 5) {                                      // Integral is not useful with large errors
+      integralY = 0;
+    }
+
+    if(errorY < 0) {                                                       // Make integral negative if error is negative
+      integralY = -1 * integralY;
+    }
     double derivativeY = errorY - previousErrorY;                          // Calculating derivative by subtracting error from previous error
 
     if ((errorY < .01) && (errorY > -.01)) {
@@ -63,7 +84,7 @@ void Objects::setPowerY() {
     } else if (errorY > 15) {
       powerY = 0;
     } else {
-      powerY = (errorY * kPY) + (derivativeY * kDY);
+      powerY = (errorY * kPY) + (integralY * kIY) + (derivativeY * kDY);
     }
   } else {
     powerY = 0;
@@ -97,7 +118,7 @@ void Objects::setValues(int id, int height, int width, int originX, int originY)
   averagedHeight = static_cast<int>(round(averageArray(heightArray)));           
   averageDistanceToObject = round(averageArray(distanceArray));
   idZ = id;                              // Sets object variables to those passed by updateValues()
-  this->area = width * height;
+  area = width * height;
   this->originX = originX;
   this->originY = originY;
 }
@@ -157,12 +178,12 @@ void Objects::setObjectType() {           // Determine the type of object based 
 }
 
 void Objects::updateValues(int visionX, int visionY, int originX, int originY, double distanceTo, int id, int height, int width) {
-    this->updateArrays(visionX, visionY, height, width, distanceTo);         // Function that calls all of the smaller functions
-    this->setValues(id, height, width, originX, originY);
-    this->setObjectType();
-    this->setConditions();
-    this->setExistence();
-    this->setPower();
+  this->updateArrays(visionX, visionY, height, width, distanceTo);         // Function that calls all of the smaller functions
+  this->setValues(id, height, width, originX, originY);
+  this->setObjectType();
+  this->setConditions();
+  this->setExistence();
+  this->setPower();
 }
 
 void Objects::setDefaultValues() {          // This function sets all the values back to default values. It is called in the constructor as an initialization for variables as well.
@@ -188,6 +209,8 @@ void Objects::setDefaultValues() {          // This function sets all the values
 
   previousErrorX = 0;
   previousErrorY = 0;
+  integralX = 0;
+  integralY = 0;
 
   arrayLoopCounter = 0;
   sufficientDataCounter = 0;
