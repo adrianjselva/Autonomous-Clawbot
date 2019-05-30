@@ -127,15 +127,15 @@ void checkVisionButton() {
 }
 
 void drawVisionMapView() {
-  Brain.Screen.clearScreen(color::black);                                             // Sets the background color to black
-  Brain.Screen.setPenColor(color::blue);                                              // Sets the pen color to blue
-  Brain.Screen.drawLine(xOffset, 0, xOffset, visionHeight);                           // Draws the left bound of the vision map
-  Brain.Screen.drawLine(xOffset, visionHeight, xVisionOffset, visionHeight);          // Draws the bottom bound of the vision map
-  Brain.Screen.drawLine(xVisionOffset, visionHeight, xVisionOffset, 0);               // Draws the right bound of the vision map
+  Brain.Screen.clearScreen(color::black);                                                                                          // Sets the background color to black
+  Brain.Screen.setPenColor(color::blue);                                                                                           // Sets the pen color to blue
+  Brain.Screen.drawLine(xOffset, 0, xOffset, visionHeight);                                                                        // Draws the left bound of the vision map
+  Brain.Screen.drawLine(xOffset, visionHeight, xVisionOffset, visionHeight);                                                       // Draws the bottom bound of the vision map
+  Brain.Screen.drawLine(xVisionOffset, visionHeight, xVisionOffset, 0);                                                            // Draws the right bound of the vision map
 
-  Brain.Screen.setPenColor(color::white);                                             // Sets the pen color to white
-  Brain.Screen.drawRectangle(xVisionOffset + 21, 10, 40, 40, vex::color::red);        // Draws the rectangle for the Exit button                                            
-  Brain.Screen.printAt(xVisionOffset + 25, 35, false, "Exit");                        // Draws the "Exit" text to the screen
+  Brain.Screen.setPenColor(color::white);                                                                                          // Sets the pen color to white
+  Brain.Screen.drawRectangle(EXIT_BUTTON_X, EXIT_BUTTON_Y, EXIT_BUTTON_WIDTH, EXIT_BUTTON_LOWER_BOUND_X, vex::color::red);         // Draws the rectangle for the Exit button                                            
+  Brain.Screen.printAt(EXIT_TEXT_X, EXIT_TEXT_Y, false, "Exit");                                                                   // Draws the "Exit" text to the screen
 }
 
 void drawLines() {
@@ -143,7 +143,7 @@ void drawLines() {
   Brain.Screen.drawLine(168 + xOffset, 0, 249 + xOffset, visionHeight);               // Draws middle bound line for the centered x
   Brain.Screen.drawLine(168 + xOffset, 0, 261 + xOffset, visionHeight);               // Draws the upper bound line
   Brain.Screen.drawLine(168 + xOffset, 0, 237 + xOffset, visionHeight);               // Draws the lower bound line
-}
+} /** Based on calculations of linear equations in Objects.cpp **/
 
 void drawActionManagerView() {
   Brain.Screen.setFont(fontType::mono15);       
@@ -182,9 +182,9 @@ void drawActionManagerView() {
   Brain.Screen.print("Vision View");                                                  // Vision view button text
 
   Brain.Screen.setPenColor(color::white);
-  Brain.Screen.drawRectangle(xVisionOffset + 21, 10, 40, 40, vex::color::red);        // Draw stop button 
+  Brain.Screen.drawRectangle(STOP_BUTTON_X, STOP_BUTTON_Y, STOP_BUTTON_WIDTH, STOP_BUTTON_LOWER_BOUND_X, vex::color::red);        // Draw stop button 
   Brain.Screen.setPenColor(color::white);
-  Brain.Screen.printAt(xVisionOffset + 25, 35, false, "Stop"); 
+  Brain.Screen.printAt(STOP_TEXT_X, STOP_TEXT_Y, false, "Stop"); 
 }
 
 void exit() {

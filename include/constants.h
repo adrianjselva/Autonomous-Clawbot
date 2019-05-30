@@ -90,4 +90,25 @@ const int EXIT_BUTTON_UPPER_BOUND_X = xVisionOffset + 61;
 const int EXIT_BUTTON_LOWER_BOUND_Y = 10;
 const int EXIT_BUTTON_UPPER_BOUND_Y = 50;
 
+const int EXIT_BUTTON_X = xVisionOffset + 21;
+const int EXIT_BUTTON_Y = 10;
+const int EXIT_BUTTON_WIDTH = 40;
+const int EXIT_BUTTON_HEIGHT = 40;
+
+const int EXIT_TEXT_X = xVisionOffset + 25;
+const int EXIT_TEXT_Y = 35;
+
+const int STOP_TEXT_X = xVisionOffset + 25;
+const int STOP_TEXT_Y = 35;
+
+const int STOP_BUTTON_X = xVisionOffset + 21;
+const int STOP_BUTTON_Y = 10;
+const int STOP_BUTTON_WIDTH = 40;
+const int STOP_BUTTON_HEIGHT = 40;
+
+const int VISION_BUTTON_X = 295;
+const int VISION_BUTTON_Y = 173;
+const int VISION_BUTTON_WIDTH = 110;
+const int VISION_BUTTON_HEIGHT = 30;
+
 #endif
