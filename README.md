@@ -1,7 +1,5 @@
 # Autonomous-Clawbot
 
-> Code for programming a VEX Clawbot to autonomously locate a yellow object and place it on a red holder
-
 ## Classes
 
 ### Objects
